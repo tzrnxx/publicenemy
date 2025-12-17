@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Nadder</title>
+<link rel="icon" type="icon" href="image/1.jpg">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+
+<style>
+html, body, * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    height: 100vh;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+#background-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: url('image/bg.jpg') center center / cover no-repeat;
+    opacity: 0;
+    filter: blur(8px);
+    transition: filter 1.5s ease-out, opacity 1.5s ease-out;
+    animation-play-state: paused;
+}
+#background-layer.active {
+    opacity: 1;
+    filter: blur(0px);
+    animation-play-state: running;
+}
+#intro {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    cursor: pointer;
+    background: transparent;
+    transition: opacity 0.7s ease;
+}
+#intro-text {
+    font-size: clamp(0.1rem, 1vw, 1rem);
+    color: #fff;
+    text-shadow: 0 0 20px #fff;
+}
+#main {
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    position: relative;
+}
+#main.show { opacity: 1; }
+.profile-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+.profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    outline-offset: 2px;
+    transition: 0.4s;
+}
+.profile-pic:hover {
+    transform: scale(1.06);
+}
+.discord-note-top {
+    position: absolute;
+    top: 130px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0000003d;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 200;
+    padding: 6px 14px;
+    border-radius: 50px;
+    border: 1px solid #fff;
+    white-space: nowrap;
+    z-index: 10;
+}
+.username {
+    font-size: clamp(1rem, 3vw, 2rem);
+    color: #fff;
+    margin: 15px 0 8px;
+    letter-spacing: 2px;
+}
+.typing-status {
+    color: #fff;
+    font-size: 0.8rem;
+    text-shadow: 0 0 12px #fff;
+    min-height: 34px;
+    margin: 10px 0 20px;
+    letter-spacing: 1.5px;
+}
+.discord-status-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: -20px 0 20px;
+    font-size: 14px;
+    color: #fff;
+}
+.status-indicator {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #43b581;
+    box-shadow: 0 0 12px #43b581;
+    animation: pulse 2s infinite;
+}
+.status-indicator.idle { background: #faa61a; box-shadow: 0 0 12px #faa61a; }
+.status-indicator.dnd { background: #f04747; box-shadow: 0 0 12px #f04747; }
+.status-indicator.offline { background: #747f8d; box-shadow: 0 0 12px #747f8d; animation: none; }
+@keyframes pulse { 0%,100% { opacity: 0.8; } 50% { opacity: 1; } }
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin: 25px 0;
+    font-size: 32px;
+}
+.social-links a {
+    color: #fff;
+    transition: 0.4s;
+}
+.social-links a:hover {
+    transform: translateY(-6px) scale(1.2);
+    text-shadow: 0 0 35px #fff;
+}
+.music-widget {
+    width: 315px;
+    height: 80px;
+    background: #0000001f;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    position: relative;
+}
+.music-cover { width: 46px; height: 46px; border-radius: 10px; }
+.music-info { flex: 1; text-align: center; }
+.music-title, .music-artist {
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.music-title { font-weight: bold; font-size: 13px; }
+.music-artist { font-size: 11px; opacity: 0.9; }
+.equalizer {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-right: 4px;
+}
+.equalizer span {
+    width: 3px; height: 14px; background: #fff; border-radius: 2px;
+    display: inline-block; margin: 0 1.5px;
+    animation: bounce 1.6s infinite;
+    animation-play-state: paused;
+}
+.equalizer span:nth-child(2) { animation-delay: 0.2s; }
+.equalizer span:nth-child(3) { animation-delay: 0.4s; }
+.equalizer span:nth-child(4) { animation-delay: 0.6s; }
+@keyframes bounce { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+.progress-bar {
+    position: absolute;
+    bottom: 6px;
+    left: 12px;
+    width: calc(100% - 24px);
+    height: 3px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+}
+.progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ccc, #fff);
+    border-radius: 2px;
+}
+.views-bottom {
+    position: fixed;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.151);
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    user-select: none;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+.views-bottom.show {
+    opacity: 1;
+}
+.views-bottom i { text-shadow: 0 0 2px #fff; }
+.views-bottom span { font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="background-layer"></div>
+<div id="intro">
+    <div id="intro-text">click</div>
+</div>
+<div id="main">
+    <div class="profile-container">
+        <img src="./image/1.jpg" alt="Nadder" class="profile-pic" draggable="false"> 
+        <div class="discord-note-top" id="discord-note">dz</div>
+    </div>
+    <div class="username">Nadder</div>
+    <div class="typing-status" id="typing-status"></div>
+    <div class="discord-status-bottom">
+        <div class="status-indicator" id="status-dot"></div>
+        <span id="status-text">Online</span>
+    </div>
+    <div class="social-links">
+        <a href="https://www.tiktok.com/@exclsv_nad?_r=1&_t=ZS-92IYsZ95XCU" target="_blank" rel="noopener" draggable="false">
+            <i class="fa-brands fa-tiktok"></i>
+        </a>
+    </div>
+    <div class="music-widget">
+        <img src="./image/icon.jpg" class="music-cover" alt="Cover" draggable="false">
+        <div class="music-info">
+            <div class="music-title">Airam</div>
+            <div class="music-artist"></div>
+        </div>
+        <div class="equalizer">
+            <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="progress-bar"><div class="progress"></div></div>
+        <audio id="audio" src="./music/Pullup.mp3" loop></audio>
+    </div>
+</div>
+<div class="views-bottom">
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+"use strict";
+
+// --- YOUR CONFIG ---
+const DISCORD_ID = "1400373997551489107"; 
+const PHRASES = ["poging templero"];
+
+// Fresh Firebase Instance
+const firebaseConfig = {
+    apiKey: "AIzaSyAs-Nadder-2025-Reset",
+    authDomain: "nadder-stats.firebaseapp.com",
+    projectId: "nadder-stats",
+    storageBucket: "nadder-stats.appspot.com",
+    messagingSenderId: "5566778899",
+    appId: "1:5566778899:web:nadder-reset-id"
+};
+
+// --- VIEW COUNTER RESET LOGIC ---
+if (typeof firebase !== 'undefined') {
+    if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    
+    // Changing "nadder_v2" effectively resets your counter to 0 for all new visitors
+    const counterDoc = db.collection("counters").doc("nadder_v2");
+
+    async function handleCounter() {
+        const countElement = document.getElementById("viewsCount");
+        try {
+            const newCount = await db.runTransaction(async (transaction) => {
+                const sfDoc = await transaction.get(counterDoc);
+                if (!sfDoc.exists) {
+                    transaction.set(counterDoc, { count: 1 });
+                    return 1;
+                }
+                const newNum = sfDoc.data().count + 1;
+                transaction.update(counterDoc, { count: newNum });
+                return newNum;
+            });
+            countElement.textContent = newCount.toLocaleString();
+        } catch (e) {
+            console.error("Counter failed:", e);
+            countElement.textContent = "1";
+        }
+    }
+    handleCounter();
+}
+
+// --- DISCORD & INTERFACE LOGIC ---
+let phraseIdx = 0, charIdx = 0, isDeleting = false;
+const typingEl = document.getElementById("typing-status");
+
+function type() {
+    const current = PHRASES[phraseIdx];
+    typingEl.textContent = isDeleting ? current.substring(0, charIdx--) : current.substring(0, charIdx++);
+    if (!isDeleting && charIdx > current.length) { isDeleting = true; setTimeout(type, 2000); }
+    else if (isDeleting && charIdx < 0) { isDeleting = false; phraseIdx = (phraseIdx + 1) % PHRASES.length; setTimeout(type, 500); }
+    else setTimeout(type, isDeleting ? 100 : 200);
+}
+
+async function updateLanyard() {
+    try {
+        const res = await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);
+        const { data } = await res.json();
+        if (data) {
+            document.getElementById("status-dot").className = `status-indicator ${data.discord_status}`;
+            document.getElementById("status-text").textContent = data.discord_status;
+            const custom = data.activities.find(a => a.type === 4);
+            if (custom) document.getElementById("discord-note").textContent = custom.state;
+        }
+    } catch (e) {}
+}
+
+document.getElementById("intro").onclick = function() {
+    this.style.opacity = "0";
+    document.getElementById("background-layer").classList.add("active");
+    setTimeout(() => {
+        this.remove();
+        document.getElementById("main").classList.add("show");
+        document.querySelector(".views-bottom").classList.add("show");
+        const audio = document.getElementById("audio");
+        audio.volume = 0.4;
+        audio.play().catch(() => {});
+        document.querySelectorAll(".equalizer span").forEach(s => s.style.animationPlayState = "running");
+        type();
+    }, 700);
+};
+
+updateLanyard();
+setInterval(updateLanyard, 10000);
+</script>
+</body>
+</html>
