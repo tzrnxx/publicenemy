@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Lusyo</title>
+<link rel="icon" type="icon" href="image/1.jpg">
+
+
+<link rel="canonical" href="https://gnja.xyz/Lusyo" />
+<meta name="robots" content="index, follow" />
+
+<meta property="og:title" content="Lusyo" />
+<meta property="og:description" content="POWER IS NEVER YOURS TO OWN, IT IS ONLY BORROWED" />
+<meta property="og:url" content="https://gnja.xyz/Lusyo" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Lusyo" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:image" content="https://i.imgur.com/7pMohXZ.jpeg" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Lusyo" />
+<meta name="twitter:description" content="POWER IS NEVER YOURS TO OWN, IT IS ONLY BORROWED" />
+<meta name="twitter:image" content="https://i.imgur.com/7pMohXZ.jpeg" />
+
+<link rel="image_src" href="https://i.imgur.com/7pMohXZ.jpeg" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link href="https://fonts.googleapis.com/css2?family=Creepster&display=swap" rel="stylesheet">
+
+<style>
+html, body, * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+    height: 100vh;
+    background: #000;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Consolas', 'Courier New', monospace;
+}
+#background-layer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    background: url('image/lusyow.gif') center center / cover no-repeat;
+    opacity: 0;
+    filter: blur(8px);
+    transition: filter 1.5s ease-out, opacity 1.5s ease-out;
+    animation-play-state: paused;
+}
+#background-layer.active {
+    opacity: 1;
+    filter: blur(0px);
+    animation-play-state: running;
+}
+#intro {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    cursor: pointer;
+    background: transparent;
+    transition: opacity 0.7s ease;
+}
+#intro-text {
+    font-size: clamp(0.1rem, 1vw, 1rem);
+    color: #fff;
+    text-shadow: 0 0 20px #fff;
+}
+#main {
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    position: relative;
+}
+#main.show { opacity: 1; }
+.profile-container {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+.profile-pic {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    outline-offset: 2px;
+    transition: 0.4s;
+}
+.profile-pic:hover {
+    transform: scale(1.06);
+}
+.discord-note-top {
+    position: absolute;
+    top: 130px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0000003d;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 200;
+    padding: 6px 14px;
+    border-radius: 50px;
+    border: 1px solid #fff;
+    white-space: nowrap;
+    z-index: 10;
+}
+.username {
+    font-size: clamp(1rem, 3vw, 2rem);
+    color: #fff;
+    margin: 15px 0 8px;
+    letter-spacing: 2px;
+}
+.typing-status {
+    color: #fff;
+    font-size: 0.8rem;
+    text-shadow: 0 0 12px #fff;
+    min-height: 34px;
+    margin: 10px 0 20px;
+    letter-spacing: 1.5px;
+}
+.discord-status-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: -20px 0 20px;
+    font-size: 14px;
+    color: #fff;
+}
+.status-indicator {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #43b581;
+    box-shadow: 0 0 12px #43b581;
+    animation: pulse 2s infinite;
+}
+.status-indicator.idle { background: #faa61a; box-shadow: 0 0 12px #faa61a; }
+.status-indicator.dnd { background: #f04747; box-shadow: 0 0 12px #f04747; }
+.status-indicator.offline { background: #747f8d; box-shadow: 0 0 12px #747f8d; animation: none; }
+@keyframes pulse { 0%,100% { opacity: 0.8; } 50% { opacity: 1; } }
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    margin: 25px 0;
+    font-size: 32px;
+}
+.social-links a {
+    color: #fff;
+    transition: 0.4s;
+}
+.social-links a:hover {
+    transform: translateY(-6px) scale(1.2);
+    text-shadow: 0 0 35px #fff;
+}
+.music-widget {
+    width: 315px;
+    height: 80px;
+    background: #0000001f;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 8px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    position: relative;
+}
+.music-cover { width: 46px; height: 46px; border-radius: 10px; }
+.music-info { flex: 1; text-align: center; }
+.music-title, .music-artist {
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.music-title { font-weight: bold; font-size: 13px; }
+.music-artist { font-size: 11px; opacity: 0.9; }
+.equalizer {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    margin-right: 4px;
+}
+.equalizer span {
+    width: 3px; height: 14px; background: #fff; border-radius: 2px;
+    display: inline-block; margin: 0 1.5px;
+    animation: bounce 1.6s infinite;
+    animation-play-state: paused;
+}
+.equalizer span:nth-child(2) { animation-delay: 0.2s; }
+.equalizer span:nth-child(3) { animation-delay: 0.4s; }
+.equalizer span:nth-child(4) { animation-delay: 0.6s; }
+@keyframes bounce { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1); } }
+.progress-bar {
+    position: absolute;
+    bottom: 6px;
+    left: 12px;
+    width: calc(100% - 24px);
+    height: 3px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 2px;
+}
+.progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ccc, #fff);
+    border-radius: 2px;
+}
+.views-bottom {
+    position: fixed;
+    left: 50%;
+    bottom: 14px;
+    transform: translateX(-50%);
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.151);
+    color: #fff;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    user-select: none;
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 1.5s ease;
+}
+.views-bottom.show {
+    opacity: 1;
+}
+.views-bottom i { text-shadow: 0 0 2px #fff; }
+.views-bottom span { font-weight: 700; }
+</style>
+</head>
+<body>
+<div id="background-layer"></div>
+<div id="intro">
+    <div id="intro-text">click</div>
+</div>
+<div id="main">
+    <div class="profile-container">
+        <img src="./image/1.jpg" alt="Lusyo" class="profile-pic" draggable="false"> 
+        <div class="discord-note-top" id="discord-note">nagpapakilig sa mama mo 24/7</div>
+    </div>
+    <div class="username">Lusyo</div>
+    <div class="typing-status" id="typing-status"></div>
+    <div class="discord-status-bottom">
+        <div class="status-indicator" id="status-dot"></div>
+        <span id="status-text">Online</span>
+    </div>
+    <div class="social-links">
+        <a href="https://discord.gg/publicxenemy" target="_blank" rel="noopener" draggable="false">
+            <i class="fa-brands fa-discord"></i>
+        </a>
+        <a href="https://www.instagram.com/_Lxsiow" target="_blank" rel="noopener" draggable="false">
+            <i class="fa-brands fa-instagram"></i>
+        </a>
+    </div>
+    <div class="music-widget">
+        <img src="./image/icon.jpg" class="music-cover" alt="Cover" draggable="false">
+        <div class="music-info">
+            <div class="music-title">Panis ka boy!</div>
+            <div class="music-artist">Paul N 'Ballin</div>
+        </div>
+        <div class="equalizer">
+            <span></span><span></span><span></span><span></span>
+        </div>
+        <div class="progress-bar"><div class="progress"></div></div>
+        <audio id="audio" src="./music/Pullup.mp3" loop></audio>
+    </div>
+</div>
+<div class="views-bottom">
+    <i class="fa-solid fa-eye"></i>
+    <div><span id="viewsCount">0</span></div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+"use strict";
+(function protectPage(){
+document.addEventListener('contextmenu',function(e){e.preventDefault();},true);
+document.addEventListener('dragstart',function(e){e.preventDefault();},true);
+document.addEventListener('DOMContentLoaded',function(){document.querySelectorAll('img, a, video, audio, svg').forEach(function(el){try{el.setAttribute('draggable','false');}catch(err){}});});
+const protectStyle=document.createElement('style');protectStyle.type='text/css';protectStyle.innerHTML='* { -webkit-user-select: none !important; -moz-user-select: none !important; -ms-user-select: none !important; user-select: none !important; -webkit-user-drag: none !important; user-drag: none !important; } input, textarea { user-select: text !important; }';document.head.appendChild(protectStyle);
+document.addEventListener('keydown',function(e){const k=e.key?e.key.toLowerCase():'';const ctrlOrCmd=e.ctrlKey||e.metaKey;if(e.key==='F12'){e.preventDefault();e.stopImmediatePropagation();return false;}if((e.shiftKey&&ctrlOrCmd&&['i','j','c','k'].includes(k))||(ctrlOrCmd&&['u','s','p'].includes(k))){e.preventDefault();e.stopImmediatePropagation();return false;}if(e.keyCode===123){e.preventDefault();e.stopImmediatePropagation();return false;}},true);
+let lastOuterDiff=Math.abs(window.outerWidth-window.innerWidth)+Math.abs(window.outerHeight-window.innerHeight);
+const overlayId='devtools-overlay-anti';
+function createOverlay(){if(document.getElementById(overlayId))return;const ov=document.createElement('div');ov.id=overlayId;ov.style.position='fixed';ov.style.inset='0';ov.style.zIndex='2147483647';ov.style.display='flex';ov.style.alignItems='center';ov.style.justifyContent='center';ov.style.background='rgba(0,0,0,0.95)';ov.style.color='#ff3b3b';ov.style.fontFamily="Consolas, 'Courier New', monospace";ov.style.fontSize='48px';ov.style.letterSpacing='2px';ov.style.textTransform='uppercase';ov.style.userSelect='none';ov.style.cursor='default';ov.style.transition='opacity 200ms ease';ov.textContent='fuck off';ov.style.opacity='0';ov.style.pointerEvents='auto';document.documentElement.appendChild(ov);requestAnimationFrame(()=>{ov.style.opacity='1';});}
+function removeOverlay(){const ov=document.getElementById(overlayId);if(!ov)return;ov.style.opacity='0';setTimeout(()=>{try{ov.remove();}catch(e){}},220);}
+let devtoolsOpen=false;
+function handleDevtoolsOpen(){if(devtoolsOpen)return;devtoolsOpen=true;createOverlay();}
+function handleDevtoolsClose(){}
+setInterval(function(){const currentDiff=Math.abs(window.outerWidth-window.innerWidth)+Math.abs(window.outerHeight-window.innerHeight);if(Math.abs(currentDiff-lastOuterDiff)>160){if(currentDiff>160){handleDevtoolsOpen();}else{handleDevtoolsClose();}}lastOuterDiff=currentDiff;},1000);
+(function consoleDetectionLoop(){const check=function(){try{let opened=false;const obj={get opened(){opened=true;handleDevtoolsOpen();return true;}};console.log('%c','font-size:1px',obj);if(!opened){} }catch(e){}finally{setTimeout(check,1000);}};check();})();
+})();
+const phrases=["evil jordan","pogi","public enemy"];let phraseIndex=0,charIndex=0,deleting=false;const typingEl=document.getElementById("typing-status");
+function typeWriter(){if(!typingEl)return;const current=phrases[phraseIndex];if(!deleting&&charIndex<=current.length){typingEl.textContent=current.substring(0,++charIndex);}else if(deleting&&charIndex>=0){typingEl.textContent=current.substring(0,--charIndex);}if(charIndex>current.length){deleting=true;setTimeout(typeWriter,3000);return;}if(deleting&&charIndex<0){deleting=false;phraseIndex=(phraseIndex+1)%phrases.length;}setTimeout(typeWriter,deleting?120:300);}
+const DISCORD_ID="1251558452292096122   ";const noteEl=document.getElementById("discord-note");const statusDot=document.getElementById("status-dot");const statusText=document.getElementById("status-text");
+async function updateLanyard(){if(!statusDot)return;try{const res=await fetch(`https://api.lanyard.rest/v1/users/${DISCORD_ID}`);const {data}=await res.json();if(data){let note="nagpapakilig sa mama mo 24/7";if(data.activities){const custom=data.activities.find(a=>a.type===4);if(custom?.state)note=custom.state.trim()||"dz";}if(noteEl)noteEl.textContent=note;const status=data.discord_status;if(statusDot)statusDot.className=`status-indicator ${status}`;if(statusText)statusText.textContent=status.charAt(0).toUpperCase()+status.slice(1);}}catch(e){console.error("Lanyard update failed:",e);if(noteEl)noteEl.textContent="dz";if(statusDot)statusDot.className="status-indicator offline";if(statusText)statusText.textContent="Offline";}}
+updateLanyard();setInterval(updateLanyard,5000);
+const introEl=document.getElementById("intro");const backgroundLayerEl=document.getElementById("background-layer");const viewsBottomEl=document.querySelector(".views-bottom");
+if(introEl){introEl.onclick=()=>{if(backgroundLayerEl){backgroundLayerEl.classList.add("active");}introEl.style.opacity="0";setTimeout(()=>{try{introEl.remove();}catch(err){}const mainEl=document.getElementById("main");if(mainEl)mainEl.classList.add("show");if(viewsBottomEl){viewsBottomEl.classList.add("show");}typeWriter();const audio=document.getElementById("audio");if(audio){audio.volume=0.5;audio.play().catch(error=>console.log("Audio playback failed:",error));}document.querySelectorAll(".equalizer span").forEach(s=>s.style.animationPlayState="running");},700);};}
+const audioEl=document.getElementById("audio");if(audioEl){audioEl.ontimeupdate=()=>{const p=document.querySelector(".progress");if(!p)return;if(!audioEl.duration||!isFinite(audioEl.duration))return;p.style.width=(audioEl.currentTime/audioEl.duration)*100+"%";};}
+const firebaseConfig={apiKey:"AIzaSyCGPKvVPL8IgBTjJ8BV8LLs5RjHg97--WI",authDomain:"siteviews-6ac5c.firebaseapp.com",projectId:"siteviews-6ac5c",storageBucket:"siteviews-6ac5c.firebasestorage.app",messagingSenderId:"963960122654",appId:"1:963960122654:web:f66c892cddac2a7adead0f",measurementId:"G-7MCK42ZD0G"};
+if(typeof firebase!=='undefined'){if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);const db=firebase.firestore();const counterDoc=db.collection("counters").doc("myVisitorCount");async function incrementVisitorCount(){const countElement=document.getElementById("viewsCount");if(!countElement)return;try{const newCount=await db.runTransaction(async(tx)=>{const snap=await tx.get(counterDoc);const current=snap.exists?(snap.data().count||0):0;const next=current+1;if(!snap.exists)tx.set(counterDoc,{count:next});else tx.update(counterDoc,{count:next});return next;});countElement.textContent=newCount.toLocaleString();}catch(e){console.error("Firebase Transaction failed:",e);countElement.textContent="Error";}}incrementVisitorCount();}else{console.warn("Firebase SDK not loaded. View counter will not function.");}
+</script>
+</body>
+</html>
